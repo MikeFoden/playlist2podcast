@@ -125,7 +125,7 @@ class playlist2podcast:
             "download_archive": str(download_directory.joinpath("downloaded.txt")),
             "outtmpl": str(download_directory.joinpath("%(title)s.%(ext)s")),
             "ignoreerrors": True,
-            "format": "bestaudio/best",
+            "format": "m4a",
             "writeinfojson": True,
         }
 
@@ -161,7 +161,7 @@ class playlist2podcast:
         fg.podcast.itunes_category("Podcasting")
 
         for file in os.listdir(podcast_dir):
-            if file.endswith(".webm"):
+            if file.endswith(".m4a"):
                 filename = os.path.splitext(file)[0]
 
                 with open(podcast_dir.joinpath(f"{filename}.info.json"), "r") as jsonf:
