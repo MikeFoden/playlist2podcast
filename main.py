@@ -70,6 +70,7 @@ class playlist2podcast:
 
         self.PODCASTS_PATH = Path(config["podcasts_path"])
         self.HOST_BASE_URL = config["host_base_url"]
+        self.DATE_AFTER = config.get("dateafter")  # optional parameter
 
         if self.HOST_BASE_URL[-1] != "/":
             self.HOST_BASE_URL += "/"
@@ -129,6 +130,9 @@ class playlist2podcast:
             "writeinfojson": True,
         }
 
+        if self.DATE_AFTER:
+            ydl_opts["daterange"] = yt_dlp.DateRange(start=self.DATE_AFTER, end=None)
+
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([pod.playlist_url])
 
@@ -150,7 +154,10 @@ class playlist2podcast:
         thumbnail_url = ""
         thumbnail_biggest_pixel_count = 0
         for thumb in pod.playlist_meta["thumbnails"]:
-            pixel_count = thumb["height"] * thumb["width"]
+            if thumb.get("id") == "avatar_uncropped":
+                thumbnail_url = thumb["url"]
+                break
+            pixel_count = thumb.get("height", 0) * thumb.get("width", 0)
             if pixel_count > thumbnail_biggest_pixel_count:
                 thumbnail_url = thumb["url"]
                 thumbnail_biggest_pixel_count = pixel_count
